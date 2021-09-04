@@ -1,6 +1,7 @@
 # geek-time-task
 
 - first-week (第一周作业)
+    - 前端技术知识体系脑图.xmind
     - video-2.js(状态机 ｜ 有限状态机)
     - video-3.js(状态机 ｜ 不使用状态机处理字符串（一）)
     - video-4.js(状态机 ｜ 不使用状态机处理字符串（二）)
