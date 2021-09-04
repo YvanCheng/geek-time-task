@@ -184,17 +184,13 @@ class Request {
             })
         });
     }
-
+    
     toString() {
-        return `${this.method} ${this.path} HTTP/1.1\r\n${Object.keys(this.headers).map(key => `${key}: ${this.headers[key]}`).join('\r\n')}\r\n\r\n${this.bodyText}`;
+        return `${this.method} ${this.path} HTTP/1.1\r
+${Object.keys(this.headers).map(key => `${key}: ${this.headers[key]}`).join(`\r\n`)}\r
+\r
+${this.bodyText}`;
     }
-// 不能使用编译器默认换行符，否则400
-//     toString() {
-//         return `${this.method} ${this.path} HTTP/1.1 \r
-// ${Object.keys(this.headers).map(key => `${key}: ${this.headers[key]}`).join(`\r\n`)}\r
-// \r
-// ${this.bodyText}`;
-//     }
 }
 
 
