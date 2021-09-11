@@ -1,4 +1,5 @@
 const net = require("net");
+const parser = require("./parser.js");
 
 const JSON_CONTENT = "application/json";
 const FORM_CONTENT = "application/x-www-form-urlencoded";
@@ -177,7 +178,6 @@ class Request {
                 });
             }
             connection.on('data', (data) => {
-                console.log(data.toString());
                 parser.receive(data.toString());
                 if (parser.isFinished) {
                     resolve(parser.response);
@@ -215,6 +215,6 @@ void async function () {
         }
     });
     let response = await request.send();
-
-    console.log(response);
+    const dom = parser.parseHTML(response.body);
+    console.log(dom);
 }();
