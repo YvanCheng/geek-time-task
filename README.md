@@ -14,3 +14,7 @@
 - second-week (第二周作业)
     - parser.js(HTML解析)
     - cssParser.js(CSS解析)
+
+- third-week (第三周作业)
+    - layout.js(dom元素计算)
+    - render.js(渲染元素图片输出)

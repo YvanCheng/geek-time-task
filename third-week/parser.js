@@ -1,4 +1,5 @@
 const cssParser = require("./cssParser.js");
+const layout = require("./layout.js");
 
 
 // 文件末尾判定
@@ -286,6 +287,7 @@ function outputToken(token) {
             if (top.tagName === "style") {
                 cssParser.addCSSRules(top.children[0].content);
             }
+            layout(top);
             stack.pop();
         }
         currentTextNode = null;
