@@ -45,7 +45,7 @@ const syntax = {
         ["Identifier"]
     ],
     Literal: [
-        ["Number"]
+        ["NumericLiteral"]
     ]
 }
 
@@ -56,7 +56,7 @@ function closure(state) {
     let queue = [];
     for (const symbol in state) {
         if (symbol.match(/^\$/)) {
-            return;
+            continue;
         }
         queue.push(symbol);
     }
@@ -81,7 +81,7 @@ function closure(state) {
     }
     for (const symbol in state) {
         if (symbol.match(/^\$/)) {
-            return;
+            continue;
         }
         if (hash[JSON.stringify(state[symbol])]) {
             state[symbol] = hash[JSON.stringify(state[symbol])];
@@ -100,45 +100,95 @@ let start = {
 
 closure(start);
 
-function parse(source) {
+// console.log(start);
+
+// let source = `
+// for (let i = 0; i < 3; i++) {
+//     for (let j = 0; j < 3; j++) {
+//         const cell = document.createElement("div");
+//         cell.classList.add("cell");
+//         cell.innerText = pattern[i * 3 + j] === 2 ? "🍵" : 
+//             pattern[i * 3 + j] === 1 ? "🐩" : "";
+//         cell.addEventListener("click", () => userMove(j, i));
+//         board.appendChild(cell);
+//     }
+//     board.appendChild(document.createElement("br"));
+// }
+// `
+
+let source = `
+let a;
+var b;
+`
+
+function parse() {
     let stack = [start];
     let symbolStack = [];
-
     function reduce() {
         let state = stack[stack.length - 1];
-        if (state.$reduceType) {
+        if (state.$reduceType) { 
             let children = [];
             for (let i = 0; i < state.$reduceLength; i++) {
-                children.push(stack.pop());
+                stack.pop();
+                children.push(symbolStack.pop());
             }
             //create a non-terminal symbol and shift it
-            shift({
+            return {
                 type: state.$reduceType,
                 children: children.reverse()
-            });
-        } else {
+            };
+        }  else {
             throw new Error("unexpected token");
         }
     }
-    function shift(symbol){
+    function shift(symbol) {
         let state = stack[stack.length - 1];
         if (symbol.type in state) {
             stack.push(state[symbol.type]);
             symbolStack.push(symbol);
         } else {
-            /** reduce to non-terminal symbols */
-            reduce();
+            shift(reduce());
             shift(symbol);
         }
     }
+
     for (const symbol of scan(source)) {
         shift(symbol);
-        console.log(symbol);
+    }
+    return reduce();
+}
+
+let evaluator = {
+    Program(node) {
+        console.log(node);
+    },
+    Program(node){
+        return evaluate(node.children[0]);
+    },
+    StatementList(node){
+        if (node.children.length === 1) {   
+            return evaluate(node.children[0]);
+        } else {
+            evaluate(node.children[0]);
+            return evaluate(node.children[1]);
+        }
+    },
+    Statement(node){
+        return evaluate(node.children[0]);
+    },
+    VariableDeclaration(node) {
+        console.log("Declaration variable", node.children[1].value);
+    },
+    EOF() {
+        return null;
     }
 }
 
-let source = `
-    const a;
-`
+function evaluate(node) {
+    if (evaluator[node.type]) {
+        return evaluator[node.type](node);
+    }
+}
 
-parse(source);
+const tree = parse(source);
+evaluate(tree);

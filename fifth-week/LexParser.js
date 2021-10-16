@@ -13,6 +13,7 @@ class XRegExp {
         let length = 0;
         const regexp = source[name].replace(/\<([^>]+)\>/g, (str, $1) => {
             this.table.set(start + length, $1);
+            // this.table.set($1, start + length);
             ++length;
             let r = this.compileRegExp(source, $1, start + length);
             length += r.length;
@@ -30,7 +31,7 @@ class XRegExp {
                 r[this.table.get(i - 1)] = r[i];
             }
         }
-        console.log(JSON.stringify(r[0]));
+        // console.log(JSON.stringify(r[0]));
         return r;
     }
     get lastIndex() {
@@ -48,8 +49,8 @@ export function* scan(str) {
         LineTerminator: /\n/,
         Comments: /\/\*(?:[^*]|\*[^\/])*\*\/|\/\/[^\n]*/,
         Token:"<Literal>|<Keywords>|<Identifier>|<Punctuator>",
-        Literal: "<NumberLiteral>|<BooleanLiteral>|<StringLiteral>|<NullLiteral>",
-        NumberLiteral: /(?:[1-9][0-9]*|0)(?:\.[0-9]*)?|\.[0-9]+/,
+        Literal: "<NumericLiteral>|<BooleanLiteral>|<StringLiteral>|<NullLiteral>",
+        NumericLiteral: /(?:[1-9][0-9]*|0)(?:\.[0-9]*)?|\.[0-9]+/,
         BooleanLiteral: /true|false/,
         StringLiteral: /\"(?:[^"\n]|\\[\s\S])*\"|\'(?:[^'\n]|\\[\s\S])*\'/,
         NullLiteral: /null/,
@@ -59,15 +60,16 @@ export function* scan(str) {
     }, "g", "InputElement");
     while(regexp.lastIndex < str.length){
         const r = regexp.exec(str);
+
         if (r.Whitespace) {
 
         } else if (r.LineTerminator) {
 
         } else if (r.Comments) {
 
-        } else if (r.NumberLiteral) {
+        } else if (r.NumericLiteral) {
             yield {
-                type: "NumberLiteral",
+                type: "NumericLiteral",
                 value: r[0]
             }
         } else if (r.BooleanLiteral) {
@@ -106,3 +108,21 @@ export function* scan(str) {
         type: "EOF"
     }
 }
+
+let source = `
+for (let i = 0; i < 3; i++) {
+    for (let j = 0; j < 3; j++) {
+        const cell = document.createElement("div");
+        cell.classList.add("cell");
+        cell.innerText = pattern[i * 3 + j] === 2 ? "🍵" : 
+            pattern[i * 3 + j] === 1 ? "🐩" : "";
+        cell.addEventListener("click", () => userMove(j, i));
+        board.appendChild(cell);
+    }
+    board.appendChild(document.createElement("br"));
+}
+`
+
+// for (const element of scan(source)) {
+//     console.log(element);
+// }
