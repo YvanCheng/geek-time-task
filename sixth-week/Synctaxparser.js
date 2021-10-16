@@ -1,5 +1,4 @@
 import { scan } from "./LexParser.js";
-
 const syntax = {
     Program: [["StatementList", "EOF"]],
     StatementList: [
@@ -12,22 +11,34 @@ const syntax = {
         ["VariableDeclaration"],
         ["FunctionDeclaration"]
     ],
+    FunctionDeclaration: [
+        ["function", "Identifier", "(", ")", "{", "StatementList", "}"]
+    ],
     IfStatement: [
-        ["if","(", "Expresion", ")", "Statement"]
+        ["if","(", "Expression", ")", "Statement"]
     ],
     VariableDeclaration: [
         ["var", "Identifier", ";"],
         ["let", "Identifier", ";"],
         ["const", "Identifier", ";"]
     ],
-    FunctionDeclaration: [
-        ["function", "Identifier","(",")","{","StatementList","}"]
-    ],
     ExpressionStatement: [
         ["Expression", ";"]
     ],
     Expression: [
-        ["AdditiveExpression"]
+        ["AssignmentExpression"]
+    ],
+    AssignmentExpression: [
+        ["LeftHandSideExpression", "=", "LogicalORExpression"],
+        ["LogicalORExpression"]
+    ],
+    LogicalORExpression: [
+        ["LogicalANDExpression"],
+        ["LogicalORExpression", "||", "LogicalANDExpression"]
+    ],
+    LogicalANDExpression: [
+        ["AdditiveExpression"],
+        ["LogicalANDExpression", "&&", "AdditiveExpression"]
     ],
     AdditiveExpression: [
         ["MultiplicativeExpression"],
@@ -35,9 +46,34 @@ const syntax = {
         ["AdditiveExpression", "-", "MultiplicativeExpression"]
     ],
     MultiplicativeExpression: [
+        ["LeftHandSideExpression"],
+        ["MultiplicativeExpression", "*", "LeftHandSideExpression"],
+        ["MultiplicativeExpression", "/", "LeftHandSideExpression"],
+    ],
+    LeftHandSideExpression: [
+        ["CallExpression"],
+        ["NewExpression"]
+    ],
+    CallExpression: [
+        ["MemberExpression", "Arguments"],
+        ["CallExpression", "Arguments"]
+    ],
+    Arguments: [
+        ["(", ")"],
+        ["(", "ArgumentList", ")"]
+    ],
+    ArgumentList: [
+        ["AssignmentExpression"],
+        ["ArgumentList", ",", "AssignmentExpression"]
+    ],
+    NewExpression: [
+        ["MemberExpression"],
+        ["new", "NewExpression"]
+    ],
+    MemberExpression: [
         ["PrimaryExpression"],
-        ["MultiplicativeExpression", "*", "PrimaryExpression"],
-        ["MultiplicativeExpression", "/", "PrimaryExpression"],
+        ["PrimaryExpression", ".", "Identifier"],
+        ["PrimaryExpression", "[", "Expression", "]"],
     ],
     PrimaryExpression:[
         ["(", "Expression" ,")"],
@@ -45,6 +81,7 @@ const syntax = {
         ["Identifier"]
     ],
     Literal: [
+        ["Whitespace"],
         ["NumericLiteral"],
         ["StringLiteral"],
         ["NullLiteral"],
@@ -117,17 +154,12 @@ let start = {
 
 closure(start);
 
-let source = `
-let a;
-var b;
-`
-
-function parse() {
+export function parse(source) {
     let stack = [start];
     let symbolStack = [];
     function reduce() {
         let state = stack[stack.length - 1];
-        if (state.$reduceType) { 
+        if (state.$reduceType) {
             let children = [];
             for (let i = 0; i < state.$reduceLength; i++) {
                 stack.pop();
@@ -138,65 +170,24 @@ function parse() {
                 type: state.$reduceType,
                 children: children.reverse()
             };
-        }  else {
+        } else {
             throw new Error("unexpected token");
         }
     }
-    function shift(symbol) {
+    function shift(symbol){
         let state = stack[stack.length - 1];
         if (symbol.type in state) {
             stack.push(state[symbol.type]);
             symbolStack.push(symbol);
         } else {
+            /** reduce to non-terminal symbols */
             shift(reduce());
             shift(symbol);
         }
     }
-
-    for (const symbol of scan(source)) {
+    const tree = scan(source);
+    for (const symbol of tree) {
         shift(symbol);
     }
     return reduce();
-}
-
-let evaluator = {
-    Program(node) {
-        console.log(node);
-    },
-    Program(node){
-        return evaluate(node.children[0]);
-    },
-    StatementList(node){
-        if (node.children.length === 1) {   
-            return evaluate(node.children[0]);
-        } else {
-            evaluate(node.children[0]);
-            return evaluate(node.children[1]);
-        }
-    },
-    Statement(node){
-        return evaluate(node.children[0]);
-    },
-    VariableDeclaration(node) {
-        console.log("Declaration variable", node);
-    },
-    EOF() {
-        return null;
-    }
-}
-
-function evaluate(node) {
-    if (evaluator[node.type]) {
-        return evaluator[node.type](node);
-    }
-}
-
-const tree = parse(source);
-console.log(tree);
-evaluate(tree);
-
-
-
-window.js = {
-    evaluate, parse
 }
