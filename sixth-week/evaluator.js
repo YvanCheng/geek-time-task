@@ -84,7 +84,6 @@ export class Evaluator {
             }
             value = value * n + c
         }
-        console.log(value);
         return Number(node.value);
     }
     StringLiteral(node) {
@@ -139,9 +138,9 @@ export class Evaluator {
     Property(node, object) {
         let name;
         if (node.children[0].type === "Identifier") {
-            name = node.children[0].name;
+            name = node.children[0].value;
         } else if (node.children[0].type === "StringLiteral") {
-            name = node.children[0].name;
+            name = node.children[0].value;
         }
         object.set(name, {
             value: this.evaluate(node.children[2]),
