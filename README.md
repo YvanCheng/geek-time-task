@@ -22,3 +22,9 @@
 - fourth-week (第四周作业)
     - js-abnf(js定义)
     - lexer.html(词法语法分析)
+
+- fifth-week~seventh-week（第五-七周作业）
+    - toy-js
+- eighth-week（第八周作业）
+    - /dist 编译后目录，可执行main.html
+    - ../webpack.config.js webpack的配置

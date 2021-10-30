@@ -1,0 +1,31 @@
+{
+  "name": "geek-time-task",
+  "version": "1.0.0",
+  "description": "study",
+  "main": "index.js",
+  "devDependencies": {
+    "@babel/core": "^7.15.8",
+    "@babel/plugin-transform-react-jsx": "^7.14.9",
+    "@babel/preset-env": "^7.15.8",
+    "babel-loader": "^8.2.3",
+    "webpack": "^5.60.0",
+    "webpack-cli": "^4.9.1",
+    "webpack-dev-server": "^4.4.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/YvanCheng/geek-time-task.git"
+  },
+  "keywords": [
+    "task"
+  ],
+  "author": "yvanlong",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/YvanCheng/geek-time-task/issues"
+  },
+  "homepage": "https://github.com/YvanCheng/geek-time-task#readme"
+}
