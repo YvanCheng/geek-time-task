@@ -28,3 +28,6 @@
 - eighth-week（第八周作业）
     - /dist 编译后目录，可执行main.html
     - ../webpack.config.js webpack的配置
+- ninth-week（第九周作业）
+    - /dist 编译后目录
+    - ../webpack.config.js webpack的配置
