@@ -31,3 +31,6 @@
 - ninth-week（第九周作业）
     - /dist 编译后目录
     - ../webpack.config.js webpack的配置
+- tenth-week（第十周作业）
+    - /dist 编译后目录
+    - ../webpack.config.js webpack的配置
