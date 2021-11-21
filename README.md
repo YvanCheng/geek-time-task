@@ -34,3 +34,7 @@
 - tenth-week（第十周作业）
     - /dist 编译后目录
     - ../webpack.config.js webpack的配置
+- eleventh-week（第十一周作业）
+    - toolchian (generator目录)
+    - geek-demo (generator生成的项目目录)
+    - mocha-nyc-demo (mocha\nyc的demo)
